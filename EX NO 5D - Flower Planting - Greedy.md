@@ -1,11 +1,17 @@
-
 # EX 5D Flower Planting.
-## DATE: 09.09.26
+
+## DATE: 18.09.2026
+
+### Developed By:Hariprasath R
+
+### Register Number:212223040059
+
 ## AIM:
+
 To write a Java program to for given constraints.
 You are given n gardens, labelled from 1 to n.
 
-You also have a list called paths, where each element paths[i] = [xi, yi] represents a bidirectional road connectingthe  garden xi and garden yi.
+You also have a list called paths, where each element paths[i] = [xi, yi] represents a bidirectional road connectingthe garden xi and garden yi.
 
 You want to plant one flower in each garden, and there are exactly 4 types of flowers labelled as 1, 2, 3, and 4.
 
@@ -25,62 +31,43 @@ A valid flower assignment always exists
 
 <img width="177" height="292" alt="image" src="https://github.com/user-attachments/assets/36aa40cb-1cdd-4746-b1a6-fc51ce6e96aa" />
 
-## Algorithm:
+## Algorithm
 
-1.Input:
-
-Read the number of gardens n and the number of paths m.
-
-Read each path pair (u, v) that connects two gardens.
-
-2.Graph Construction:
-
-Create an adjacency list for all gardens.
-
-For every path (u, v), add each garden to the other's adjacency list.
-
-3.Initialization:
-
-Create an integer array flowers[n] to store the flower type (1–4) assigned to each garden.
-
-Each garden can have one of four flower types.
-
-4.Assignment Logic:
-
-For each garden i, check all adjacent gardens.
-
-Mark the flower types already used by its neighbors and assign the first available flower type to garden i.
-
-5.Output:
-
-Print the final flower type assigned to each garden in order.  
+1. Represent the gardens and paths as an adjacency list.
+2. Initialize an array `flowers` of size `n` to store the flower type for each garden.
+3. Iterate over each garden and check the flower types already used by its neighbors.
+4. Assign the smallest available flower type (1–4) not used by neighbors.
+5. Return the `flowers` array.
 
 ## Program:
-```
-/*
-Developed by: Abinaya A
-Register Number: 212223040003
-*/
+
+### to implement graph coloring
+
+```java
 import java.util.*;
 
-public class GardenFlowerPlanner {
+public class Main {
 
-    public static int[] assignFlowers(int n, int[][] paths) {
-        @SuppressWarnings("unchecked")
-        List<Integer>[] adj = new ArrayList[n];
-        for (int i = 0; i < n; i++) adj[i] = new ArrayList<>();
+    public static int[] gardenNoAdj(int n, int[][] paths) {
+        List<List<Integer>> graph = new ArrayList<>();
+        for (int i = 0; i < n; i++) graph.add(new ArrayList<>());
 
         for (int[] path : paths) {
-            adj[path[0] - 1].add(path[1] - 1);
-            adj[path[1] - 1].add(path[0] - 1);
+            int u = path[0] - 1;
+            int v = path[1] - 1;
+            graph.get(u).add(v);
+            graph.get(v).add(u);
         }
 
         int[] flowers = new int[n];
+
         for (int i = 0; i < n; i++) {
-            boolean[] used = new boolean[5];
-            for (int nei : adj[i]) {
-                used[flowers[nei]] = true;
+            boolean[] used = new boolean[5]; // flower types 1-4
+
+            for (int neighbor : graph.get(i)) {
+                used[flowers[neighbor]] = true;
             }
+
             for (int f = 1; f <= 4; f++) {
                 if (!used[f]) {
                     flowers[i] = f;
@@ -88,34 +75,46 @@ public class GardenFlowerPlanner {
                 }
             }
         }
+
         return flowers;
     }
 
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-
-        int n = sc.nextInt(); 
-        int m = sc.nextInt(); 
+        System.out.print("Enter number of gardens: ");
+        int n = sc.nextInt();
+        System.out.print("Enter number of paths: ");
+        int m = sc.nextInt();
 
         int[][] paths = new int[m][2];
+        System.out.println("Enter paths (two numbers per line):");
         for (int i = 0; i < m; i++) {
             paths[i][0] = sc.nextInt();
             paths[i][1] = sc.nextInt();
         }
-        int[] result = assignFlowers(n, paths);
 
-        for (int flower : result) {
-            System.out.print(flower + " ");
-        }
-        System.out.println();
+        int[] result = gardenNoAdj(n, paths);
+        for (int f : result) System.out.print(f + " ");
+
+        sc.close();
     }
 }
 ```
 
 ## Output:
 
-<img width="454" height="426" alt="508112060-22e872d3-bb54-4586-8c01-ffe010576fe5" src="https://github.com/user-attachments/assets/285d6152-384a-49d7-9b3c-94006d95d46f" />
+```
+input:
+4
+3
+1 2
+2 3
+3 4
 
+output:
+1 2 1 2
+```
 
 ## Result:
+
 The program successfully implemented and the expected output is verified.
