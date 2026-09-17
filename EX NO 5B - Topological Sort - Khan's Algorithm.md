@@ -1,7 +1,13 @@
-
 # EX 5B Topological Sort - Khan's Algorithm
-## DATE: 09.09.26
+
+## DATE: 18.09.2026
+
+### Developed By: Hariprasath R
+
+### Register Number: 212223040059
+
 ## AIM:
+
 To write a Java program to for given constraints.
 Problem Description:
 A software development team is preparing for a product release. The release consists of multiple tasks, each dependent on other tasks being completed first. You are to determine a valid order in which all tasks can be completed. If it's not possible due to cyclic dependencies, output that the release cannot be scheduled.
@@ -26,109 +32,85 @@ If not, print "Release cannot be scheduled".
 
 <img width="341" height="363" alt="image" src="https://github.com/user-attachments/assets/f0355541-4f66-49da-bcd3-171a799a7c1f" />
 
-## Algorithm:
+## Algorithm
 
-1.Input:
+1. Build a directed graph using adjacency lists from the given dependencies.
+2. Compute in-degrees of all tasks.
+3. Use a queue to process all tasks with in-degree 0 (no dependencies).
+4. Remove processed tasks from the graph, updating in-degrees of neighbors.
+5. If all tasks are processed, print the order; otherwise, a cycle exists and the release cannot be scheduled.
 
-Read the number of tasks n and the number of dependency pairs m.
+## Program:to implement Topological Sort
 
-Read each dependency pair and store them in a 2D array.
-
-2.Graph Construction:
-
-Create an adjacency list to represent task dependencies.
-
-Maintain an indegree array to count incoming edges for each task.
-
-3.Initialization:
-
-Add all tasks with indegree = 0 (no dependencies) to a queue.
-
-4.Topological Sorting:
-
-Repeatedly remove a task from the queue, add it to the order list, and decrease the indegree of its dependent tasks.
-
-If a dependent task’s indegree becomes 0, add it to the queue.
-
-5.Output:
-
-If all tasks are processed, print the valid order of execution.
-
-Otherwise, display “Release cannot be scheduled” if a cycle (dependency conflict) exists.
-
-## Program:
-```
-/*
-Developed by: Abinaya A
-Register Number: 212223040003
-*/
+```java
 import java.util.*;
 
-public class prog {
-
-    public static List<Integer> findTaskOrder(int n, int[][] dependencies) {
-        List<List<Integer>> adj = new ArrayList<>();
-        for (int i = 0; i < n; i++)
-            adj.add(new ArrayList<>());
-
-        int[] indegree = new int[n];
-
-        for (int[] dep : dependencies) {
-            int a = dep[0];
-            int b = dep[1];
-            adj.get(b).add(a);
-            indegree[a]++;
-        }
-
-        Queue<Integer> q = new LinkedList<>();
-        for (int i = 0; i < n; i++)
-            if (indegree[i] == 0)
-                q.add(i);
-
-        List<Integer> order = new ArrayList<>();
-        while (!q.isEmpty()) {
-            int curr = q.poll();
-            order.add(curr);
-            for (int next : adj.get(curr)) {
-                indegree[next]--;
-                if (indegree[next] == 0)
-                    q.add(next);
-            }
-        }
-
-        if (order.size() != n)
-            return null;
-        return order;
-    }
+public class Main {
 
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-        int n = sc.nextInt();
-        int m = sc.nextInt();
 
-        int[][] dependencies = new int[m][2];
+        int n = sc.nextInt(); // number of tasks
+        int m = sc.nextInt(); // number of dependencies
+
+        List<List<Integer>> graph = new ArrayList<>();
+        int[] inDegree = new int[n];
+
+        for (int i = 0; i < n; i++) graph.add(new ArrayList<>());
+
         for (int i = 0; i < m; i++) {
-            dependencies[i][0] = sc.nextInt();
-            dependencies[i][1] = sc.nextInt();
+            int a = sc.nextInt();
+            int b = sc.nextInt();
+            graph.get(b).add(a); // b → a (a depends on b)
+            inDegree[a]++;
         }
 
-        List<Integer> result = findTaskOrder(n, dependencies);
+        Queue<Integer> queue = new LinkedList<>();
+        for (int i = 0; i < n; i++) if (inDegree[i] == 0) queue.offer(i);
 
-        if (result == null) {
-            System.out.println("Release cannot be scheduled");
-        } else {
-            for (int task : result) {
-                System.out.print(task + " ");
+        List<Integer> order = new ArrayList<>();
+
+        while (!queue.isEmpty()) {
+            int task = queue.poll();
+            order.add(task);
+
+            for (int neighbor : graph.get(task)) {
+                inDegree[neighbor]--;
+                if (inDegree[neighbor] == 0) queue.offer(neighbor);
             }
         }
+
+        if (order.size() != n) {
+            System.out.println("Release cannot be scheduled");
+        } else {
+            for (int i = 0; i < order.size(); i++) {
+                System.out.print(order.get(i));
+                if (i < order.size() - 1) System.out.print(" ");
+            }
+        }
+
+        sc.close();
     }
 }
 ```
 
 ## Output:
 
-<img width="778" height="526" alt="508110758-e974c893-cc88-4e0e-934d-cb727552d82a" src="https://github.com/user-attachments/assets/f7224a8a-6d4d-4849-8168-692a350903b0" />
+```
+input:
+6
+6
+5 2
+5 0
+4 0
+4 1
+2 3
+3 1
 
+output:
+4 5 0 2 3 1
+```
 
 ## Result:
+
 The program successfully implemented and the expected output is verified.
